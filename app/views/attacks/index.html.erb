@@ -1,0 +1,30 @@
+<h1>Listing attacks</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Vector</th>
+      <th>Ip</th>
+      <th>Time</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @attacks.each do |attack| %>
+      <tr>
+        <td><%= attack.vector %></td>
+        <td><%= attack.ip %></td>
+        <td><%= attack.updated_at %></td>
+        <td><%= link_to 'Show', attack %></td>
+        <td><%= link_to 'Edit', edit_attack_path(attack) %></td>
+        <td><%= link_to 'Destroy', attack, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+

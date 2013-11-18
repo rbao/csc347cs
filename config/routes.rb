@@ -1,5 +1,8 @@
 Csc347cs::Application.routes.draw do
 
+  resources :attacks
+
+  devise_for :users, :controllers => {sessions: "sessions"}
   resources :feedbacks
 
   root 'feedbacks#index'

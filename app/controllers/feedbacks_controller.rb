@@ -24,15 +24,50 @@ class FeedbacksController < ApplicationController
   # POST /feedbacks
   # POST /feedbacks.json
   def create
-    @feedback = Feedback.new(feedback_params)
+    @feedback = Feedback.new
+    if !params[:qa2ws3ed].blank?
+      flash[:notice] = "You are a bot! Stop it"
+      render action: 'new'
+      return
+    end
+    
+    @feedback.name = params[:name]
+    @feedback.email = params[:email]
+    @feedback.phone = params[:phone]
+    @feedback.description = params[:description]
 
-    respond_to do |format|
-      if @feedback.save
-        format.html { redirect_to @feedback, notice: 'Feedback was successfully created.' }
-        format.json { render action: 'show', status: :created, location: @feedback }
-      else
-        format.html { render action: 'new' }
-        format.json { render json: @feedback.errors, status: :unprocessable_entity }
+    sql_inj = contains_sql_metachar?(@feedback.email)
+
+    
+    if sql_inj
+      # If this looks like an attack we record it and use a different
+      # database, in this case the model InjectedFeedback is connected
+      # to the dummy database
+      injected_feedback = InjectedFeedback.new
+      injected_feedback.name = @feedback.name
+      injected_feedback.email = @feedback.email
+      injected_feedback.phone = @feedback.phone
+      injected_feedback.description = @feedback.description
+      
+      attack = Attack.new
+      attack.vector = @feedback.email
+      attack.ip = request.remote_ip
+      attack.save
+
+      db_error = injected_feedback.injected_save
+
+      render action: 'new'
+    else
+
+      respond_to do |format|
+        if @feedback.save
+
+          format.html { redirect_to @feedback, notice: 'Feedback was successfully created.' }
+          format.json { render action: 'show', status: :created, location: @feedback }
+        else
+          format.html { render action: 'new' }
+          format.json { render json: @feedback.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -62,13 +97,16 @@ class FeedbacksController < ApplicationController
   end
 
   private
+    def contains_sql_metachar?(input)
+      res = [/(')|(\-\-)/]
+      res.each do |re|
+        return true if !re.match(input).nil?
+      end
+      return false
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_feedback
       @feedback = Feedback.find(params[:id])
-    end
-
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def feedback_params
-      params.require(:feedback).permit(:name, :phone, :email, :description)
     end
 end
