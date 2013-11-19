@@ -1,6 +1,6 @@
 <h1>Listing attacks</h1>
 
-<table>
+<table >
   <thead>
     <tr>
       <th>Vector</th>
@@ -14,13 +14,13 @@
 
   <tbody>
     <% @attacks.each do |attack| %>
-      <tr>
-        <td><%= attack.vector %></td>
-        <td><%= attack.ip %></td>
-        <td><%= attack.updated_at %></td>
-        <td><%= link_to 'Show', attack %></td>
-        <td><%= link_to 'Edit', edit_attack_path(attack) %></td>
-        <td><%= link_to 'Destroy', attack, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      <tr >
+        <td style="border: 1px solid black;"><%= attack.vector %></td>
+        <td style="border: 1px solid black;"><%= attack.ip %></td>
+        <td style="border: 1px solid black;"><%= attack.updated_at %></td>
+        <td style="border: 1px solid black;"><%= link_to 'Show', attack %></td>
+        <td style="border: 1px solid black;"><%= link_to 'Edit', edit_attack_path(attack) %></td>
+        <td style="border: 1px solid black;"><%= link_to 'Destroy', attack, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>

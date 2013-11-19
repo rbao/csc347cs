@@ -11,6 +11,7 @@ if Rails.env != 'dummy'
     User.create!(email: 'admin@example.com', name: 'Admin', password: 'test1234', password_confirmation: 'test1234')
     User.create!(email: 'user1@example.com', name: 'User1', password: 'csc347user1', password_confirmation: 'csc347user1')
     User.create!(email: 'user2@example.com', name: 'User2', password: 'csc347user2', password_confirmation: 'csc347user2')
+    Feedback.create!(name: 'Roy', phone: '1234567890', email: 'roy@example.com', description: 'Make the website look better!')
   end
 else
   ActiveRecord::Base.transaction do

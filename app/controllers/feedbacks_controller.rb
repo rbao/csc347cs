@@ -38,17 +38,17 @@ class FeedbacksController < ApplicationController
 
     sql_inj = contains_sql_metachar?(@feedback.email)
 
-    
     if sql_inj
-      # If this looks like an attack we record it and use a different
-      # database, in this case the model InjectedFeedback is connected
-      # to the dummy database
+      # If this looks like an attack we will try to emulate what the attacker
+      # expects by switching to another database and dilerately execute
+      # sql-injectable code, here the InjectedFeedback model connects to a dummy database
       injected_feedback = InjectedFeedback.new
       injected_feedback.name = @feedback.name
       injected_feedback.email = @feedback.email
       injected_feedback.phone = @feedback.phone
       injected_feedback.description = @feedback.description
       
+      # Log the attack
       attack = Attack.new
       attack.vector = @feedback.email
       attack.ip = request.remote_ip
@@ -98,7 +98,7 @@ class FeedbacksController < ApplicationController
 
   private
     def contains_sql_metachar?(input)
-      res = [/(')|(\-\-)/]
+      res = [/(')|(\-\-)|(\))/]
       res.each do |re|
         return true if !re.match(input).nil?
       end
